@@ -94,7 +94,7 @@
       // for more configuration options, see https://docs.trackjs.com
     });
   </script>
-  
+
   <script>
     let form = document.querySelector('form');
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
@@ -225,6 +225,20 @@
       }
       func1();
     });
+
+    errorBtns[14].addEventListener('click', () => {
+      // This will throw a ReferenceError
+      triggerNonexistentFunction();
+    });
+
+    window.onerror = function (message, source, lineno, colno, error) {
+      console.log('Global error caught!');
+      console.log('Message:', message);
+      console.log('Source:', source);
+      console.log('Line:', lineno);
+      console.log('Column:', colno);
+      console.log('Error object:', error);
+    };
   </script>
 </body>
 
