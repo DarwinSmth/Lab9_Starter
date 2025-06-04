@@ -87,21 +87,144 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "878972e2cad14b78839cef73ae76da74"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+  
   <script>
     let form = document.querySelector('form');
+    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+    // custom error
+    class CalculationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'CalculationError';
+      }
+    }
+    // new calculator with try/catch/finally/throw and custom error
     form.addEventListener('submit', e => {
       e.preventDefault();
       let output = document.querySelector('output');
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
-      let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
-    });
+      let operator = document.querySelector('#operator')?.value;
 
-    let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
+      try {
+        if (!operator) {
+          throw new CalculationError('Missing operator selection.');
+        }
+
+        if (firstNum.trim() === '' || secondNum.trim() === '') {
+          throw new CalculationError('Inputs cannot be empty.');
+        }
+
+        const num1 = Number(firstNum);
+        const num2 = Number(secondNum);
+
+        if (isNaN(num1) || isNaN(num2)) {
+          throw new CalculationError('Inputs must be valid numbers.');
+        }
+
+        if (operator === '/' && num2 === 0) {
+          throw new CalculationError('Division by zero is not allowed.');
+        }
+
+        const result = eval(`${num1} ${operator} ${num2}`);
+        output.innerHTML = result;
+      } catch (err) {
+        if (err instanceof CalculationError) {
+          console.error(`Calculation error: ${err.name} - ${err.message}`);
+          output.innerHTML = `Error: ${err.message}`;
+        } else {
+          console.error('Unexpected error:', err);
+          output.innerHTML = 'Unexpected error occurred.';
+        }
+      } finally {
+        console.log('Calculation attempt completed.');
+      }
+    });
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    errorBtns[0].addEventListener('click', () => {
+      console.log('This is a console.log message: Hello, world!');
+    });
+
+    errorBtns[1].addEventListener('click', () => {
+      console.error('This is a console.error message: Something went wrong!');
+    });
+
+    errorBtns[2].addEventListener('click', () => {
+      console.count('Console count button clicked');
+    });
+
+    errorBtns[3].addEventListener('click', () => {
+      console.warn('This is a console.warn message: Be careful!');
+    });
+
+    errorBtns[4].addEventListener('click', () => {
+      let condition = false;
+      console.assert(condition, 'Assertion failed: condition is false!');
+    });
+
+    errorBtns[5].addEventListener('click', () => {
+      console.clear();
+    });
+
+    errorBtns[6].addEventListener('click', () => {
+      const person = { name: 'Bob', age: 30, job: 'Engineer' };
+      console.dir(person);
+    });
+
+    errorBtns[7].addEventListener('click', () => {
+      const div = document.querySelector('main');
+      console.dirxml(div);
+    });
+
+    errorBtns[8].addEventListener('click', () => {
+      console.group('Grouped Messages');
+      console.log('Message inside group 1');
+      console.log('Message inside group 2');
+    });
+
+    errorBtns[9].addEventListener('click', () => {
+      console.groupEnd();
+    });
+
+    errorBtns[10].addEventListener('click', () => {
+      const data = [
+        { name: 'Bob', age: 30 },
+        { name: 'Joe', age: 25 },
+        { name: 'Charlie', age: 35 }
+      ];
+      console.table(data);
+    });
+
+    errorBtns[11].addEventListener('click', () => {
+      console.time('TimerDemo');
+    });
+
+    errorBtns[12].addEventListener('click', () => {
+      console.timeEnd('TimerDemo');
+    });
+
+    errorBtns[13].addEventListener('click', () => {
+      function func1() {
+        func2();
+      }
+      function func2() {
+        func3();
+      }
+      function func3() {
+        console.trace('Trace button clicked');
+      }
+      func1();
+    });
   </script>
 </body>
 
